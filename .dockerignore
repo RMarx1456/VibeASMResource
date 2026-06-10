@@ -1,0 +1,7 @@
+# Keep the build context small and fast — never ship the 26 MB PDF / text dump.
+IntelSDM/*.pdf
+IntelSDM/*.txt
+**/node_modules
+**/dist
+.git
+*.log

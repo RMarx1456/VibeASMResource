@@ -1,0 +1,14 @@
+{
+  "name": "asm-sdm-etl",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "parse": "tsx src/parse.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "@types/node": "^22.10.2"
+  }
+}

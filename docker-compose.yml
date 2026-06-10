@@ -1,0 +1,57 @@
+# ASMResource — three-container full-stack deployment.
+#
+#   db        PostgreSQL 16, schema auto-loaded from db/init, persistent volume.
+#   api       Node/Express/TypeScript REST API. Seeds the DB from the parsed
+#             Intel SDM dataset on first boot.
+#   frontend  React (Vite) build served by nginx, which also reverse-proxies
+#             /api -> api:4000 so the browser only ever talks to one origin.
+#
+# Usage:  docker compose up --build   then open http://localhost:8080
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: asm
+      POSTGRES_PASSWORD: asm
+      POSTGRES_DB: asmresource
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U asm -d asmresource"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    environment:
+      PORT: 4000
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: asm
+      PGPASSWORD: asm
+      PGDATABASE: asmresource
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4000:4000" # exposed for direct API access / debugging
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+volumes:
+  db-data:
