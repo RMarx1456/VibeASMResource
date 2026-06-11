@@ -87,3 +87,67 @@ export function getInstruction(mnemonic: string): Promise<InstructionDetail> {
 export function getStats(): Promise<Stats> {
   return get<Stats>("/stats");
 }
+
+// ---- Assembler / Disassembler ----
+
+export interface ListingLine {
+  address: number;
+  bytes: string;
+  source: string;
+}
+
+export interface AsmDiagnostic {
+  line?: number;
+  col?: number;
+  message: string;
+  severity: 'error' | 'warning';
+}
+
+export interface AssembleSuccess {
+  ok: true;
+  hex: string;
+  bytes: number[];
+  listing: ListingLine[];
+}
+
+export interface AsmFailure {
+  ok: false;
+  errors: AsmDiagnostic[];
+}
+
+export type AssembleOutput = AssembleSuccess | AsmFailure;
+
+export interface DisassembleSuccess {
+  ok: true;
+  text: string;
+  listing: ListingLine[];
+}
+
+export type DisassembleOutput = DisassembleSuccess | AsmFailure;
+
+async function post<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`/api${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  return res.json() as Promise<T>;
+}
+
+export function apiAssemble(
+  source: string,
+  syntax: 'attasm' | 'intel',
+  baseAddr: number,
+): Promise<AssembleOutput> {
+  return post<AssembleOutput>('/assemble', { source, syntax, baseAddr });
+}
+
+export function apiDisassemble(
+  bytes: number[],
+  syntax: 'attasm' | 'intel',
+  baseAddr: number,
+  startOffset: number,
+  dataRegions: Array<{ start: number; end: number }>,
+): Promise<DisassembleOutput> {
+  return post<DisassembleOutput>('/disassemble', { bytes, syntax, baseAddr, startOffset, dataRegions });
+}

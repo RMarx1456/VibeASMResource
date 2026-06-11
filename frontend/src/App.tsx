@@ -2,6 +2,7 @@ import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { HomePage } from "./pages/HomePage";
 import { DetailPage } from "./pages/DetailPage";
+import { AsmPage } from "./pages/AsmPage";
 
 export function App() {
   const navigate = useNavigate();
@@ -29,6 +30,9 @@ export function App() {
           />
           <button type="submit">Search</button>
         </form>
+        <Link to="/asm" className="src">
+          Assembler / Disassembler
+        </Link>
         <a
           className="src"
           href="https://www.intel.com/sdm"
@@ -44,6 +48,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/instruction/:mnemonic" element={<DetailPage />} />
+          <Route path="/asm" element={<AsmPage />} />
         </Routes>
       </main>
 

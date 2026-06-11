@@ -191,3 +191,107 @@ tbody tr:last-child td { border-bottom: none; }
   .topbar { flex-wrap: wrap; }
   .topsearch { order: 3; flex-basis: 100%; }
 }
+
+/* ---- assembler / disassembler page ---- */
+.asm-page { max-width: 960px; }
+
+.asm-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.syntax-toggle { display: flex; align-items: center; gap: 0.75rem; }
+
+.asm-tab { display: flex; flex-direction: column; gap: 1rem; }
+
+.asm-editor-row { display: flex; flex-direction: column; gap: 0.4rem; }
+.asm-editor-header { display: flex; align-items: center; gap: 0.75rem; }
+
+.asm-editor {
+  width: 100%;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+}
+.asm-editor:focus { border-color: var(--accent); }
+
+.asm-hex-input { min-height: 4rem; }
+
+.asm-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.asm-addr-row { display: flex; align-items: center; gap: 0.5rem; }
+.asm-addr-input {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  width: 14rem;
+}
+.asm-addr-input:focus { outline: none; border-color: var(--accent); }
+
+.asm-btn-primary {
+  background: var(--accent-dim);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 0.55rem 1.25rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.asm-btn-primary:hover { background: var(--accent); }
+.asm-btn-primary:disabled { opacity: 0.4; cursor: default; }
+
+.asm-success-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.asm-success-msg { color: #3fb950; font-weight: 600; font-size: 0.9rem; }
+
+.asm-hex-dump { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+.asm-hex { flex: 1; word-break: break-all; }
+
+.asm-listing-table { font-family: var(--mono); font-size: 0.82rem; }
+.asm-addr { color: var(--muted); }
+.asm-bytes { color: #79c0ff; }
+.asm-src { color: var(--text); }
+
+.asm-errors { margin-top: 0.5rem; }
+.asm-errors-title { font-size: 0.95rem; color: #ff7b72; margin: 0 0 0.5rem; }
+.asm-error-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.asm-error-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  background: rgba(255,123,114,0.08);
+  border: 1px solid rgba(255,123,114,0.3);
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.875rem;
+}
+.asm-error-loc { color: var(--muted); font-family: var(--mono); white-space: nowrap; }
+.asm-error-msg { color: #ff7b72; }
+
+.asm-upload-row { display: flex; flex-direction: column; gap: 0.75rem; }
+.asm-upload-area { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.asm-filename { color: var(--muted); font-size: 0.85rem; font-family: var(--mono); }
+.asm-or { color: var(--muted); font-size: 0.85rem; }
