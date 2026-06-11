@@ -41,25 +41,32 @@ assert on:
 
 ## 2. Reference oracles
 
-Two external, authoritative, machine-readable sources — chosen because both are
-maintained, widely trusted, and structured enough to diff against:
+External, machine-readable references to diff against.
 
-| Oracle | What we use it for | Form |
-| --- | --- | --- |
-| **NASM** | Encoding & operand patterns. NASM's instruction table (`x86/insns.dat`) is a line-oriented table of `MNEMONIC operands  encoding  flags`. Its CI ("Travis-style") assembles `test/*.asm` and diffs against checked-in golden machine code. | Parse `insns.dat` into an expected map; optionally run `nasm`/`ndisasm` live in CI. |
-| **LLVM X86** | Cross-check of encodings and mnemonic ↔ operand-type mappings from `llvm/lib/Target/X86/X86Instr*.td`; and as a *live* assembler/disassembler oracle via `llvm-mc` / `llvm-objdump`. | Optional: shell out to `llvm-mc -show-encoding` and compare. |
+> **Decision — separate the *method* from the *tool*.** We **adopt NASM's
+> Travis-CI testing *style*** (a checked-in golden corpus diffed by an assembler
+> acting as the differential oracle), but we **do not use NASM's assembler as an
+> encoding authority** — its encoder is shoddy and outdated (the project owner
+> has hit and fixed its encoding bugs first-hand). **GNU `as` (gas) sits in the
+> oracle seat instead.**
+
+| Oracle | Role | What we use it for | Form |
+| --- | --- | --- | --- |
+| **GNU `as` / binutils** | **Primary** | Authoritative encoding & disassembly. | `as` assembles fixtures → compare bytes; `objdump -d` for the decode direction. |
+| **LLVM X86** | Secondary sanity check | Cross-check encodings and mnemonic ↔ operand-type mappings (`X86Instr*.td`); live `llvm-mc -show-encoding` / `llvm-objdump`. | Shell out and compare where it adds coverage (esp. VEX/EVEX). |
+| **NASM** | *Excluded as authority* | At most: borrow the *structure* of its `x86/insns.dat` table as a starting cross-reference, but mismatches are **advisory, never gating**. | Optional, non-blocking. |
+
+We still adopt NASM's *CI shape* (a curated golden corpus + an assembler acting
+as the differential oracle) — just with `as` in the oracle seat.
 
 **Coverage model.** We do not hand-verify all ~1,500 mnemonics. Instead:
 
 1. **Property/invariant tests** run over the **entire** dataset (cheap, total).
-2. **Oracle cross-checks** run over the **intersection** of our dataset with
-   NASM's table (large, automated coverage of encodings/operands).
+2. **Oracle cross-checks** run over the **intersection** of our dataset with the
+   reference (gas/LLVM) coverage (large, automated coverage of encodings/operands).
 3. **Golden fixtures** pin a curated **representative ~75-instruction** set
    (hand-verified against the SDM) to catch regressions on the cases we care
    most about.
-
-This mirrors NASM's own CI philosophy: a curated golden corpus + an assembler
-acting as the differential oracle.
 
 ## 3. Test categories
 
